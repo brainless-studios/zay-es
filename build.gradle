@@ -1,32 +1,13 @@
 apply plugin: 'java'
-apply plugin: 'maven'
-apply plugin: 'eclipse'
-
 
 version='1.2.1-SNAPSHOT'
 
-ext {
-	appName = 'zay-es'
-	//jmonkeyengine_version = '3.0.10'
-}
-
-sourceCompatibility = 1.8
-
 repositories {
-	mavenLocal()
-	mavenCentral()
-	jcenter()
-	maven { url "https://oss.sonatype.org/content/repositories/snapshots/" }
-	maven { url "https://oss.sonatype.org/content/repositories/releases/" }
-	maven { url 'http://updates.jmonkeyengine.org/maven' }
-	maven { url "https://jitpack.io" }
+    jcenter()
 }
-
 
 dependencies {
-	compile fileTree(dir: 'lib', include: ['*.jar'])
-	//compile "com.jme3:jme3-core:$jmonkeyengine_version"
-	compile 'com.google.guava:guava:19.0'
+    compile 'com.google.guava:guava:19.0'
     compile 'org.slf4j:slf4j-api:1.7.13'    
 }
 
@@ -44,9 +25,9 @@ configure(allprojects.findAll {it.name != 'extensions'}) {
 
     // One non-maven thing in this block to keep us honest with respect to
     // imports
-//    configurations.compile {
-//        transitive = false
-//    }    
+    configurations {
+        compile.transitive = false
+    }    
 
     // Centralizing this bintray reference here so it's easier to
     // remove when JME is in jcenter().
@@ -89,40 +70,15 @@ task sourcesJar(type: Jar) {
     exclude '**/.backups' 
 }
 
-task javadocJar(type: Jar, dependsOn: javadoc) {
-    classifier = 'javadoc'
-    from javadoc.destinationDir
-}
+//task javadocJar(type: Jar, dependsOn: javadoc) {
+//    classifier = 'javadoc'
+//    from javadoc.destinationDir
+//}
 
 artifacts {
     archives sourcesJar
-    archives javadocJar
+//    archives javadocJar
 }
 
 
-eclipse {
-	// need to specify Java source sets explicitely, SpringSource Gradle Eclipse plugin
-	// ignores any nodes added in classpath.file.withXml
-	//	sourceSets {
-	//		main {
-	//			java.srcDirs "src"
-	//			resources.srcDirs = ["src"]
-	//		}
-	//	}
-	classpath { downloadSources=true }
 
-	jdt {
-		sourceCompatibility = 1.8
-		targetCompatibility = 1.8
-	}
-
-	project {
-		name = appName
-		natures 'org.springsource.ide.eclipse.gradle.core.nature'
-	}
-}
-
-
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.2.1'
-}
